@@ -6,10 +6,14 @@ import com.coworking.app.coworking_app.Model.Coworking;
 import com.coworking.app.coworking_app.Model.User;
 import com.coworking.app.coworking_app.Repository.CoworkingRepo;
 import com.coworking.app.coworking_app.Repository.UserRepo;
+import com.coworking.app.coworking_app.Exception.CoworkingNotFoundException;
+import com.coworking.app.coworking_app.Exception.UserNotFoundException;
+import com.coworking.app.coworking_app.Exception.ReservationNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,17 +37,16 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> new UserDto(user.getName(), user.getSurname(), user.getRole()))
+        return userRepository.findAll().stream()
+                .map(UserDto::new)
                 .collect(Collectors.toList());
     }
 
-    public User getUserById(int id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User updateUser(int id, User updatedUser) {
+    public User updateUser(Long id, User updatedUser) {
         User existingUser = getUserById(id);
         existingUser.setName(updatedUser.getName());
         existingUser.setSurname(updatedUser.getSurname());
@@ -53,7 +56,8 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public void deleteUser(int id) {
+    @Transactional
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
@@ -61,23 +65,20 @@ public class UserService {
         System.out.println("Бронирование места: " + coworkingDto.getWorkSpaceName());
     }
 
-
-    public List<CoworkingDto> getUserReservations(int userId) {
+    public List<CoworkingDto> getUserReservations(Long userId) {
         User user = getUserById(userId);
+        if (user.getReservations().isEmpty()) {
+            throw new ReservationNotFoundException(userId);
+        }
         return user.getReservations().stream()
-                .map(coworking -> new CoworkingDto(
-                        coworking.getId(),
-                        coworking.getWorkSpaceName(),
-                        coworking.getAmountOfRooms(),
-                        coworking.getReservationTime(),
-                        userId))
+                .map(CoworkingDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void cancelReservation(int coworkingId) {
+    public void cancelReservation(Long coworkingId) {
         Coworking coworking = coworkingRepository.findById(coworkingId)
-                .orElseThrow(() -> new RuntimeException("Coworking not found"));
+                .orElseThrow(() -> new CoworkingNotFoundException(coworkingId));
         coworking.setUser(null);
         coworkingRepository.save(coworking);
     }

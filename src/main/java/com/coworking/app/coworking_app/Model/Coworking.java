@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class Coworking {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private long id;
 
     @Column(nullable = false)
     @NotNull(message = "Reservation's name cannot be null")
@@ -44,4 +44,13 @@ public class Coworking {
     @ManyToOne(optional = true)
     @JoinColumn(name = "admin_id")
     private Admin admin;
+
+    public Coworking(int id, String workSpaceName, int amountOfRooms, LocalDateTime reservationTime, User user, Admin admin) {
+        this.id = id;
+        this.workSpaceName = workSpaceName;
+        this.amountOfRooms = amountOfRooms;
+        this.reservationTime = reservationTime;
+        this.user = user;
+        this.admin = admin;
+    }
 }

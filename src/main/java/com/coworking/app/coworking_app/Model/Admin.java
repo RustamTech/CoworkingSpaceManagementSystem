@@ -20,7 +20,7 @@ import java.util.List;
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private long id;
 
     @Column(nullable = false)
     @NotNull(message = "Admin's name cannot be null")
@@ -37,7 +37,18 @@ public class Admin {
     @Size(min = 8, max = 20, message = "Admin's password should be between 8 and 20 characters")
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
     private List<Coworking> approvedReservations = new ArrayList<>();
+
+    public Admin(String name, String surname, String password, Role role) {
+        this.name = name;
+        this.surname = surname;
+        this.password = password;
+        this.role = role;
+    }
 }
 
