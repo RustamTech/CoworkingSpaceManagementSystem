@@ -26,11 +26,9 @@ public class UserController {
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
         user.setRole(userDto.getRole());
-        userService.registerUser(user);
+        userService.registerUser(userDto);
         return ResponseEntity.ok("User registered successfully");
     }
-
-
 
     @GetMapping("/all")
     public List<UserDto> getAllUsers() {
@@ -44,14 +42,14 @@ public class UserController {
     }
 
     @DeleteMapping("/cancel/{coworkingId}")
-    public ResponseEntity<String> cancelReservation(@PathVariable int coworkingId) {
+    public ResponseEntity<String> cancelReservation(@PathVariable long coworkingId) {
         userService.cancelReservation(coworkingId);
         return ResponseEntity.ok("Reservation cancelled successfully");
     }
 
 
     @GetMapping("/reservations/{userId}")
-    public ResponseEntity<List<CoworkingDto>> getUsersReservations(@PathVariable int userId) {
+    public ResponseEntity<List<CoworkingDto>> getUsersReservations(@PathVariable Long userId) {
         List<CoworkingDto> reservations = userService.getUserReservations(userId);
         return ResponseEntity.ok(reservations);
     }

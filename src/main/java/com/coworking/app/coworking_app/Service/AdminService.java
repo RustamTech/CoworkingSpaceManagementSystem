@@ -29,18 +29,22 @@ public class AdminService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AdminDto registerAdmin(AdminDto adminDto) {
-        Admin admin = new Admin(adminDto.getName(), adminDto.getSurname(), passwordEncoder.encode(adminDto.getPassword()), adminDto.getRole());
+
+    public AdminDto registerAdmin(AdminDto adminDto, String password) {
+        String encodedPassword = passwordEncoder.encode(password);
+        Admin admin = new Admin(adminDto.getName(), adminDto.getSurname(), encodedPassword, adminDto.getRole());
         adminRepo.save(admin);
         return new AdminDto(admin);
     }
 
+
     public void deleteUser(Long id) {
-        if (!adminRepo.existsById(id)) {
+        if (!userRepo.existsById(id)) {
             throw new UserNotFoundException(id);
         }
-        adminRepo.deleteById(id);
+        userRepo.deleteById(id);
     }
+
 
     public List<AdminDto> getAllAdmins() {
         return adminRepo.findAll().stream().map(AdminDto::new).collect(Collectors.toList());
