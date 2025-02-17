@@ -2,8 +2,10 @@ package com.coworking.app.coworking_app.Service;
 
 import com.coworking.app.coworking_app.Dto.CoworkingDto;
 import com.coworking.app.coworking_app.Dto.UserDto;
+import com.coworking.app.coworking_app.FactoryPattern.UserFactory;
 import com.coworking.app.coworking_app.Model.Coworking;
 import com.coworking.app.coworking_app.Model.User;
+import com.coworking.app.coworking_app.ObserverPattern.BookingNotify;
 import com.coworking.app.coworking_app.Repository.CoworkingRepo;
 import com.coworking.app.coworking_app.Repository.UserRepo;
 import com.coworking.app.coworking_app.Exception.CoworkingNotFoundException;
@@ -31,8 +33,10 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    @Autowired
+    private UserFactory userFactory;
+    public User registerUser(UserDto userDto) {
+        User user = userFactory.createUser(userDto.getName(), userDto.getSurname(), userDto.getRole());
         return userRepository.save(user);
     }
 
@@ -61,9 +65,15 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    @Autowired
+    private BookingNotify bookingNotify;
+
     public void bookingCoworkingPlace(CoworkingDto coworkingDto) {
-        System.out.println("Бронирование места: " + coworkingDto.getWorkSpaceName());
+        Coworking coworking = new Coworking();
+        coworking.setWorkSpaceName(coworkingDto.getWorkSpaceName());
+        bookingNotify.notifyObservers(getUserById(coworkingDto.getUserId()), coworking);
     }
+
 
     public List<CoworkingDto> getUserReservations(Long userId) {
         User user = getUserById(userId);

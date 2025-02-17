@@ -13,15 +13,12 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Table(name = "reservations")
 public class Coworking {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     @NotNull(message = "Reservation's name cannot be null")
@@ -45,12 +42,59 @@ public class Coworking {
     @JoinColumn(name = "admin_id")
     private Admin admin;
 
-    public Coworking(int id, String workSpaceName, int amountOfRooms, LocalDateTime reservationTime, User user, Admin admin) {
-        this.id = id;
+    public Coworking(String workSpaceName, int amountOfRooms, LocalDateTime reservationTime, User user, Admin admin) {
         this.workSpaceName = workSpaceName;
         this.amountOfRooms = amountOfRooms;
         this.reservationTime = reservationTime;
         this.user = user;
+        this.admin = admin;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getWorkSpaceName() {
+        return workSpaceName;
+    }
+
+    public void setWorkSpaceName(String workSpaceName) {
+        this.workSpaceName = workSpaceName;
+    }
+
+    public int getAmountOfRooms() {
+        return amountOfRooms;
+    }
+
+    public void setAmountOfRooms(int amountOfRooms) {
+        this.amountOfRooms = amountOfRooms;
+    }
+
+    public LocalDateTime getReservationTime() {
+        return reservationTime;
+    }
+
+    public void setReservationTime(LocalDateTime reservationTime) {
+        this.reservationTime = reservationTime;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
         this.admin = admin;
     }
 }
