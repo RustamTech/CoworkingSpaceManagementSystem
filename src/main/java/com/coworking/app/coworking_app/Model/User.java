@@ -21,7 +21,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private long id;
 
     @Column(nullable = false)
     @NotNull(message = "User's name cannot be null")

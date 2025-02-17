@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CoworkingRepo extends JpaRepository<Coworking, Integer> {
+public interface CoworkingRepo extends JpaRepository<Coworking, Long> {
 }
